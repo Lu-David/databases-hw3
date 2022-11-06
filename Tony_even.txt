@@ -1,4 +1,4 @@
-CREATE VIEW TotalPoints AS
+CREATE VIEW TotPoints AS
     SELECT *
     FROM Rawscores
     WHERE SSN="0001";
@@ -18,17 +18,17 @@ CREATE ASSERTION valid-ssn CHECK
                 WHERE LENGTH(Rawscores.SSN)>4 OR LENGTH(Rawscores.SSN)<4));
 
 (b) Print a single student’s percentage scores and weighted average:
-DROP PROCEDURE IF EXISTS ShowRawScores
-CREATE PROCEDURE ShowRawScores(IN SSN VARCHAR(4))
-BEGIN
-    SELECT CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%'), CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%'), CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%'), CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%'), CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%'), CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') Percentage_Scores
-    FROM Rawscores, Totpts
+DROP PROCEDURE IF EXISTS ShowRawScores;
+CREATE PROCEDURE ShowRawScores (IN SSN VARCHAR(4))
+    SELECT CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%'), CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%'), CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%'), CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%'), CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%'), CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') Percentage_Scores, cum_avg.Weighted_average
+    FROM Rawscores, Totpts, (SELECT CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
+                            FROM Rawscores, WtdPts
+                            WHERE Rawscores.SSN=SSN) cum_avg 
     WHERE Rawscores.SSN=SSN;
 
     SELECT CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
     FROM Rawscores, WtdPts
     WHERE Rawscores.SSN=SSN;
-END;
 
 (d) Print a full table of the percentage scores and weighted total
 DROP PROCEDURE IF EXISTS AllPercentages
