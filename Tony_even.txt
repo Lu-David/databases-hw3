@@ -19,39 +19,45 @@ CREATE ASSERTION valid-ssn CHECK
 
 (b) Print a single student’s percentage scores and weighted average:
 DROP PROCEDURE IF EXISTS ShowRawScores;
+DELIMITER |
 CREATE PROCEDURE ShowRawScores (IN SSN VARCHAR(4))
-    SELECT CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%') HW1, CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%') HW2a, CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%') HW2b, CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%') Midterm, CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%') HW3, CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') FExam, cum_avg.Weighted_average
-    FROM Rawscores, Totpts, (SELECT CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
-                            FROM Rawscores, WtdPts
-                            WHERE Rawscores.SSN=SSN) cum_avg 
-    WHERE Rawscores.SSN=SSN;
+    BEGIN
+        SELECT CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%') HW1, CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%') HW2a, CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%') HW2b, CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%') Midterm, CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%') HW3, CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') FExam
+        FROM Rawscores, Totpts
+        WHERE Rawscores.SSN=SSN;
+
+        SELECT CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
+        FROM Rawscores, WtdPts
+        WHERE Rawscores.SSN=SSN;
+    END;
+|
+DELIMITER ;
 
 (d) Print a full table of the percentage scores and weighted total
-DROP PROCEDURE IF EXISTS AllPercentages
-CREATE PROCEDURE AllPercentages(IN password VARCHAR2)
+DROP PROCEDURE IF EXISTS AllPercentages;
+DELIMITER |
+CREATE PROCEDURE AllPercentages(IN password VARCHAR(4000))
     BEGIN
-        DECLARE rowPassword VARCHAR2;
+        DECLARE rowPassword VARCHAR(4000);
 
         DECLARE get_password CURSOR FOR
             SELECT CurPasswords
-            FROM Passwords;
+            FROM Passwords
+            WHERE CurPasswords=password;
 
         DECLARE EXIT HANDLER FOR NOT FOUND
         SELECT 'INVALID PASSWORD' AS 'Error Message';
 
         OPEN get_password;
         FETCH get_password INTO rowPassword;
-        WHILE get_password%FOUND
-            IF rowPassword = password THEN
-                BREAK;
-            END IF;
-            FETCH get_password INTO rowPassword;
-        END WHILE
         CLOSE get_password;
-    END;
-        SELECT CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%') HW1, CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%') HW2a, CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%') HW2b, CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%') Midterm, CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%') HW3, CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') FExam, cum_avg.Weighted_average
-        FROM Rawscores, Totpts, (SELECT CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
+
+        SELECT Rawscores.LName, Rawscores.FName, Rawscores.Section, CONCAT((Rawscores.HW1/Totpts.HW1)*100, '%') HW1, CONCAT((Rawscores.HW2a/Totpts.HW2a)*100, '%') HW2a, CONCAT((Rawscores.HW2b/Totpts.HW2b)*100, '%') HW2b, CONCAT((Rawscores.Midterm/Totpts.Midterm)*100,'%') Midterm, CONCAT((Rawscores.HW3/Totpts.HW3)*100, '%') HW3, CONCAT((Rawscores.FExam/Totpts.FExam)*100,'%') FExam, cum_avg.Weighted_average
+        FROM Rawscores, Totpts, (SELECT Rawscores.SSN, CONCAT('The cumulative course average for ', Rawscores.FName, ' ', Rawscores.LName, ' ',  'is ', (Rawscores.HW1*WtdPts.HW1+Rawscores.HW2a*WtdPts.HW2a+Rawscores.HW2b*WtdPts.HW2b+Rawscores.Midterm*WtdPts.Midterm+Rawscores.HW3*WtdPts.HW3+Rawscores.FExam*WtdPts.FExam)) Weighted_average
                                 FROM Rawscores, WtdPts
                                 WHERE Rawscores.SSN=SSN) cum_avg 
-        WHERE Rawscores.SSN!="0001" AND Rawscores.SSN!="0002"
-        ORDER BY Section;
+        WHERE Rawscores.SSN!="0001" AND Rawscores.SSN!="0002" AND Rawscores.SSN=cum_avg.SSN
+        ORDER BY Rawscores.Section;
+    END;
+|
+DELIMITER ;
