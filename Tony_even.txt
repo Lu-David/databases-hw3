@@ -12,11 +12,6 @@ CREATE VIEW WtdPts AS
     SELECT (1/Totpts.HW1)*Weight.HW1 HW1, (1/Totpts.HW2a)*Weight.HW2a HW2a, (1/Totpts.HW2b)*Weight.HW2b HW2b, (1/Totpts.Midterm)*Weight.Midterm Midterm, (1/Totpts.HW3)*Weight.HW3 HW3, (1/Totpts.FExam)*Weight.FExam FExam
     FROM Totpts, Weight;
 
-CREATE ASSERTION valid-ssn CHECK
-    (NOT EXISTS (SELECT *
-                FROM Rawscores
-                WHERE LENGTH(Rawscores.SSN)>4 OR LENGTH(Rawscores.SSN)<4));
-
 (b) Print a single student’s percentage scores and weighted average:
 DROP PROCEDURE IF EXISTS ShowRawScores;
 DELIMITER |
