@@ -5,9 +5,9 @@
 
 <?php
 $dbhost = 'dbase.cs.jhu.edu';
-$dbuser = '22fa_tjung8';
-$dbpass = 'OiJPmTsrwr';
-$dbname = '22fa_tjung8_db';
+$dbuser = 'YOUR_SQL_USERNAME';
+$dbpass = 'YOUR_SQL_PASSWORD';
+$dbname = 'YOUR_SQL_DATABASE';
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s<br>", mysqli_connect_error());
