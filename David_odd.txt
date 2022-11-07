@@ -1,0 +1,25 @@
+-- a) Print a single student’s raw scores
+DROP PROCEDURE IF EXISTS ShowRawScores;
+DELIMITER |
+CREATE PROCEDURE ShowRawScores (IN SSN VARCHAR(4))
+    BEGIN
+        DECLARE rowSSN VARCHAR(4);
+
+        DECLARE get_student CURSOR FOR
+            SELECT Rawscores.SSN
+            FROM Rawscores
+            WHERE Rawscores.SSN=SSN;
+
+        DECLARE EXIT HANDLER FOR NOT FOUND
+        SELECT 'STUDENT NOT FOUND' AS 'Error Message';
+
+        OPEN get_student;
+        FETCH get_student INTO rowSSN;
+        CLOSE get_student;
+
+        SELECT *
+        FROM Rawscores
+        WHERE Rawscores.SSN=SSN;
+    END;
+|
+DELIMITER ;
