@@ -89,7 +89,8 @@ CREATE PROCEDURE AllRawScores(IN password VARCHAR(4000))
 
         SELECT *
         FROM Rawscores
-        ORDER BY Rawscores.Section;
+        WHERE Rawscores.SSN != "0001" OR Rawscores.SSN != "0002"
+        ORDER BY Rawscores.Section, Rawscores.LName, Rawscores.FName;
     END;
 |
 DELIMITER ;
