@@ -13,9 +13,9 @@ CREATE VIEW WtdPts AS
     FROM Totpts, Weight;
 
 (b) Print a single student’s percentage scores and weighted average:
-DROP PROCEDURE IF EXISTS ShowRawScores;
+DROP PROCEDURE IF EXISTS ShowPercentages;
 DELIMITER |
-CREATE PROCEDURE ShowRawScores (IN SSN VARCHAR(4))
+CREATE PROCEDURE ShowPercentages (IN SSN VARCHAR(4))
     BEGIN
         DECLARE rowSSN VARCHAR(4);
 
