@@ -20,10 +20,10 @@ if ($mysqli->multi_query("CALL AllRawScores('".$pword."');")) {
         if (count($row) == 1) {
             printf("%s", $row[0]);
         } else {
-            printf("LName | FName | Section | HW1 | HW2a | HW2b | Midterm | HW3 | FExam <br>");
+            printf("SSN | LName | FName | Section | HW1 | HW2a | HW2b | Midterm | HW3 | FExam <br>");
             printf("---------------------------------------------------------------------------------------------------------------------<br>");
             do {
-                printf("%s | %s | %s | %s | %s | %s | %s | %s | %s <br>", $row[0], $row[1], $row[2], $row[3], $row[4], $row[5], $row[6], $row[7], $row[8]);
+                printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s <br>", $row[0], $row[1], $row[2], $row[3], $row[4], $row[5], $row[6], $row[7], $row[8], $row[9]);
             } while ($row = $result->fetch_row());
         }
         $result->close();
