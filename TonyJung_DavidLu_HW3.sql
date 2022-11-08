@@ -119,7 +119,7 @@ CREATE PROCEDURE AllPercentages(IN password VARCHAR(4000))
                                 FROM Rawscores, WtdPts
                                 WHERE Rawscores.SSN=SSN) cum_avg 
         WHERE Rawscores.SSN!="0001" AND Rawscores.SSN!="0002" AND Rawscores.SSN=cum_avg.SSN
-        ORDER BY Rawscores.Section;
+        ORDER BY Rawscores.Section, cum_avg.Weighted_average;
     END;
 |
 DELIMITER ;
